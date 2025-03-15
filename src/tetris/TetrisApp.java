@@ -35,6 +35,7 @@ public class TetrisApp {
 		//
 		// *** Game state initialization ***
 		board = new Board();
+		board.startListeningForKeyPresses();
 
 		//
 		// *** Starting a new game ***
@@ -53,7 +54,7 @@ public class TetrisApp {
 			do {				
 				// Wait 1 second before move down automatically
 				try {
-					Thread.sleep(100);
+					Thread.sleep(500);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

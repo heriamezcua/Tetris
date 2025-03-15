@@ -30,14 +30,24 @@ public abstract class Tetrimino {
 	}
 
 	public int[][] getShape() {
-	    int[][] originalShape = this.shape;
-	    int[][] copy = new int[originalShape.length][];
-	    
-	    for (int i = 0; i < originalShape.length; i++) {
-	        copy[i] = Arrays.copyOf(originalShape[i], originalShape[i].length);
-	    }
+		int[][] originalShape = this.shape;
+		int[][] copy = new int[originalShape.length][];
 
-	    return copy; // Devuelve una copia en lugar de la referencia original
+		for (int i = 0; i < originalShape.length; i++) {
+			copy[i] = Arrays.copyOf(originalShape[i], originalShape[i].length);
+		}
+
+		return copy;
+	}
+
+	public void setShape(int[][] newShape) {
+		int[][] copy = new int[newShape.length][];
+
+		for (int i = 0; i < newShape.length; i++) {
+			copy[i] = Arrays.copyOf(newShape[i], newShape[i].length);
+		}
+
+		this.shape = copy;
 	}
 
 	public void moveRight() {

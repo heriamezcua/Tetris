@@ -23,7 +23,11 @@ public class Board {
 	 */
 	public Board() {
 		this.gameBoard = new int[20][10];
-		System.out.println(Arrays.deepToString(gameBoard));
+	}
+
+	public void startListeningForKeyPresses() {
+		ConsoleKeyListener keyListener = new ConsoleKeyListener(this);
+		keyListener.start();
 	}
 
 	public void spawnTetrimino() {
@@ -83,6 +87,27 @@ public class Board {
 		return true; // There is no collision
 	}
 
+	public void rotateCurrentTetrimino() {
+		if (currentTetrimino == null)
+			return;
+
+		clearTetriminoFromBoard(); // Delete the actual tetrimino shape
+
+		int[][] originalShape = currentTetrimino.getShape(); // Save the actual shape
+		currentTetrimino.rotate(); // Try to rotate
+
+		// If the rotation provokes a collision with a board bound or other tetrimino, revert the rotation
+		if (!canMove(currentTetrimino, currentTetrimino.getX(), currentTetrimino.getY())) {
+			currentTetrimino.setShape(originalShape); // Back to the original shape
+		}
+
+		// Set the tetrimino rotated
+		placeTetriminoOnBoard();
+
+		// Print the current board status
+		printBoard();
+	}
+
 	public void fixTetriminoToBoard() {
 		int[][] shape = currentTetrimino.getShape();
 
@@ -106,13 +131,12 @@ public class Board {
 		// Both for are for iterating the tetrimino shape
 		for (int i = 0; i < shape.length; i++) {
 			for (int j = 0; j < shape[i].length; j++) {
-				
+
 				if (shape[i][j] == 1) { // If the shape belongs to the tetrimino
-					
-					
+
 					int boardX = currentTetrimino.getX() + j;
 					int boardY = currentTetrimino.getY() + i;
-					
+
 					if (boardY >= 0 && boardY < gameBoard.length && boardX >= 0 && boardX < gameBoard[0].length) {
 						gameBoard[boardY][boardX] = 1; // Fix the tetrimino in the board
 					}
@@ -128,7 +152,7 @@ public class Board {
 		for (int i = 0; i < shape.length; i++) {
 			for (int j = 0; j < shape[i].length; j++) {
 				if (shape[i][j] == 1) { // If the shape belongs to the tetrimino
-					
+
 					// boardXY are the next position X Y of the tetrimino if can move
 					int boardX = currentTetrimino.getX() + j;
 					int boardY = currentTetrimino.getY() + i;

@@ -15,19 +15,19 @@ public class TetriminoFactory {
 
 		switch (type) {
 		case 0:
-			return new OShape(); // Square (O)
-		case 1:
-			return new IShape(); // Line (I)
-		case 2:
-			return new TShape(); // T
-		case 3:
-			return new LShape(); // L
-		case 4:
-			return new JShape(); // Reverse L (J)
-		case 5:
-			return new SShape(); // S
-		case 6:
 			return new ZShape(); // Z
+		case 1:
+			return new SShape(); // S
+		case 2:
+			return new IShape(); // Line (I)
+		case 3:
+			return new OShape(); // Square (O)
+		case 4:
+			return new TShape(); // T
+		case 5:
+			return new LShape(); // L
+		case 6:
+			return new JShape(); // Reverse L (J)
 		default:
 			return new OShape(); // for security I return an Square
 		}

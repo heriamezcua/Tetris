@@ -13,7 +13,7 @@ public class OShape extends Tetrimino {
 
 	@Override
 	public void rotate() {
-
+		// The rotation is the same
 	}
 
 }
