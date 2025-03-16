@@ -30,6 +30,7 @@ public class ConsoleKeyListener implements KeyListener {
 		frame.addKeyListener(this);
 		frame.setFocusable(true); // We need to focus to receive key strokes
 		frame.setFocusTraversalKeysEnabled(false); // Needed to capture all keys
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setAlwaysOnTop(true); // To maintain the focus
 		frame.setVisible(true);
 	}

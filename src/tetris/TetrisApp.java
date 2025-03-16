@@ -39,10 +39,12 @@ public class TetrisApp {
 	public void run() {
 
 		board = new Board();
+		SoundManager.loop("tetris_theme"); // Loop tetris theme
 		board.startListeningForKeyPresses();
 		board.spawnTetrimino();
 
 		while (!board.isGameOver()) {
+
 			board.placeTetriminoOnBoard();
 			board.printBoard();
 
@@ -70,8 +72,17 @@ public class TetrisApp {
 
 			} while (moved);
 
-			// Fix tetrimino to the board and check for game over
+			// Fix tetrimino to the board, clear full lines and spawn a new tetrimino
 			board.fixTetriminoToBoard();
+		}
+		SoundManager.stop(); // stop the main theme
+		board.stopListeningForKeyPresses();
+		System.out.println("Game Over!");
+		SoundManager.play("game_over");
+		try {
+			Thread.sleep(1500);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 	}
 }

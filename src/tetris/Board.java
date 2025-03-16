@@ -22,6 +22,8 @@ public class Board {
 
 	private boolean isFastDropping = false;
 
+	private ConsoleKeyListener keyListener;
+
 	/**
 	 * Constructs a new Board for the Tetris game with the specified size.
 	 * Initializes a two-dimensional array representing the game board.
@@ -34,8 +36,17 @@ public class Board {
 	 * Starts listening for keyboard inputs.
 	 */
 	public void startListeningForKeyPresses() {
-		ConsoleKeyListener keyListener = new ConsoleKeyListener(this);
+		keyListener = new ConsoleKeyListener(this);
 		keyListener.start();
+	}
+
+	/**
+	 * Stops listening for keyboard inputs.
+	 */
+	public void stopListeningForKeyPresses() {
+		if (keyListener != null) {
+			keyListener.stop();
+		}
 	}
 
 	/**
@@ -61,6 +72,8 @@ public class Board {
 		// Move down until it can't
 		while (moveCurrentTetriminoDown())
 			;
+
+		SoundManager.play("hard_drop"); // hard drop sound
 
 		fixTetriminoToBoard();
 	}
@@ -104,7 +117,7 @@ public class Board {
 
 		currentTetrimino.setX(nextX); // Move the tetrimino
 		placeTetriminoOnBoard();
-
+		SoundManager.play("move"); // move sound
 		return true;
 	}
 
@@ -182,6 +195,7 @@ public class Board {
 		for (int row = MAX_Y; row >= MIN_Y; row--) {
 			if (isFullLine(row)) {
 				removeLine(row);
+				SoundManager.play("line_clear");
 				row++; // Check the same row again after go all down
 			}
 		}
@@ -231,6 +245,8 @@ public class Board {
 			currentTetrimino.setShape(originalShape); // Back to the original shape
 		}
 
+		SoundManager.play("rotate"); // rotation sound
+
 		// Set the tetrimino rotated
 		placeTetriminoOnBoard();
 	}
@@ -239,6 +255,7 @@ public class Board {
 	 * Fixes the current tetrimino to the board and checks for full lines.
 	 */
 	public void fixTetriminoToBoard() {
+
 		int[][] shape = currentTetrimino.getShape();
 
 		for (int i = 0; i < shape.length; i++) {
@@ -256,11 +273,6 @@ public class Board {
 
 		// Delete all the full lines after fix the current tetrimino
 		clearFullLines();
-
-		if (isGameOver()) {
-			System.out.println("Game Over!");
-			System.exit(0); // The game is over
-		}
 
 		spawnTetrimino();
 	}
@@ -340,6 +352,14 @@ public class Board {
 		System.out.println(sb.toString() + base + arrows);
 	}
 
+	/**
+	 * Sets the horizontal position of the given Tetrimino.
+	 *
+	 * @param tetrimino The Tetrimino whose horizontal position is to be set.
+	 * @param x         The new x-coordinate for the Tetrimino.
+	 * @throws IllegalArgumentException If the x-coordinate is out of the valid
+	 *                                  range (MIN_X to MAX_X).
+	 */
 	public void setHorizontal(Tetrimino tetrimino, int x) {
 		if (x < MIN_X || x > MAX_X) {
 			throw new IllegalArgumentException(
@@ -348,6 +368,14 @@ public class Board {
 		tetrimino.setX(x);
 	}
 
+	/**
+	 * Sets the vertical position of the given Tetrimino.
+	 *
+	 * @param tetrimino The Tetrimino whose vertical position is to be set.
+	 * @param y         The new y-coordinate for the Tetrimino.
+	 * @throws IllegalArgumentException If the y-coordinate is out of the valid
+	 *                                  range (MIN_Y to MAX_Y).
+	 */
 	public void setVertical(Tetrimino tetrimino, int y) {
 		if (y < MIN_Y || y > MAX_Y) {
 			throw new IllegalArgumentException(

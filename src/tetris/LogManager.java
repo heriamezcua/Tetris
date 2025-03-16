@@ -19,5 +19,4 @@ public class LogManager {
 	}
 }
 
-
 //LogManager.LOGGER.log(Level.INFO, "Tetrimino setted:", currentTetrimino);
