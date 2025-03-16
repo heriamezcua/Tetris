@@ -1,11 +1,16 @@
 package tetris;
 
+/**
+ * The TetrisApp class serves as the entry point for the Tetris game. It manages
+ * the game loop and board interactions.
+ */
 public class TetrisApp {
 
 	// *******************************
 	// *** ATTRIBUTES ***
 	// *******************************
 
+	/** The game board instance. */
 	private Board board;
 
 	// *******************************
@@ -26,44 +31,36 @@ public class TetrisApp {
 	// *******************************
 	// *** MAIN GAME LOGIC LOOP ***
 	// *******************************
+
 	/**
-	 * Executes the main game loop of the Tetris application. This method handles
-	 * the initialization of the game, ....
+	 * Runs the main game loop of the Tetris application. This method initializes
+	 * the game, listens for user input, and continuously updates the game state.
 	 */
 	public void run() {
 
-		//
-		// *** Game state initialization ***
 		board = new Board();
 		board.startListeningForKeyPresses();
+		board.spawnTetrimino();
 
-		//
-		// *** Starting a new game ***
-		do {
-			// Generate a random tetrimino
-			board.spawnTetrimino();
-
-			// Place the tetrimino in the board
+		while (!board.isGameOver()) {
 			board.placeTetriminoOnBoard();
-			
-			// Print the board
 			board.printBoard();
 
-			// Move down automatically until it can't
+			// Move down automatically until movement is blocked
 			boolean moved;
-			do {				
-				// Wait 1 second before move down automatically
+			do {
+				// Wait 1 second before the tetrimino move down automatically
 				try {
-					Thread.sleep(500);
+					Thread.sleep(board.getFastDropping() ? 250 : 1000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 
-				// Try to move down if possible
-				moved = board.moveCurrentTetriminoDown(); // Intenta mover la pieza abajo
-				
 				// clear the previous position
 				board.clearTetriminoFromBoard();
+
+				// Try to move down if possible
+				moved = board.moveCurrentTetriminoDown();
 
 				// Place the current tetrimino position on the board
 				board.placeTetriminoOnBoard();
@@ -73,14 +70,8 @@ public class TetrisApp {
 
 			} while (moved);
 
-			// When the tetrimino can`t move fix it to the board
+			// Fix tetrimino to the board and check for game over
 			board.fixTetriminoToBoard();
-
-		} while (true);
-
+		}
 	}
-
-// ***********************
-// *** PRIVATE METHODS ***
-// ***********************
 }

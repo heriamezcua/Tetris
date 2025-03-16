@@ -1,17 +1,27 @@
 package tetrimino;
 
+/**
+ * Represents the T-shaped Tetrimino in Tetris. This piece has a specific
+ * initial configuration and can rotate.
+ */
 public class TShape extends Tetrimino {
 
+	/**
+	 * Constructs a TShape Tetrimino with its default shape.
+	 */
 	public TShape() {
 		super(new int[][]
 		// @formatter:off
 				{ { 1, 1, 1 },
 				  { 0, 1, 0 },
-				  { 0, 1, 0 }});
+				  { 0, 0, 0 }});
 		// @formatter:on
 
 	}
 
+	/**
+	 * Rotates the TShape Tetrimino 90 degrees clockwise.
+	 */
 	@Override
 	public void rotate() {
 

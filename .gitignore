@@ -3,6 +3,9 @@
 
 # Log file
 *.log
+./logs/
+./src/tetris/LogManager.java
+
 
 # BlueJ files
 *.ctxt

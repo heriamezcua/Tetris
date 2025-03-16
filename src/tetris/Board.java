@@ -5,31 +5,112 @@ import java.util.Arrays;
 import tetrimino.Tetrimino;
 import tetrimino.TetriminoFactory;
 
+/**
+ * Represents the game board for a Tetris game. Manages tetrimino movement,
+ * collision detection, line clearing, and game state.
+ */
 public class Board {
 
 	private int[][] gameBoard;
 	private Tetrimino currentTetrimino;
 
-	// Boundary constants
+	// Board boundaries
 	private static final int MIN_X = 0;
 	private static final int MAX_X = 9; // Maximum horizontal boundary (assuming board width is 10)
 	private static final int MIN_Y = 0;
 	private static final int MAX_Y = 19; // Maximum vertical boundary (assuming board height is 20)
 
+	private boolean isFastDropping = false;
+
 	/**
 	 * Constructs a new Board for the Tetris game with the specified size.
 	 * Initializes a two-dimensional array representing the game board.
-	 *
 	 */
 	public Board() {
 		this.gameBoard = new int[20][10];
 	}
 
+	/**
+	 * Starts listening for keyboard inputs.
+	 */
 	public void startListeningForKeyPresses() {
 		ConsoleKeyListener keyListener = new ConsoleKeyListener(this);
 		keyListener.start();
 	}
 
+	/**
+	 * Enables or disables fast dropping.
+	 * 
+	 * @param isFast true to enable fast dropping, false to disable.
+	 */
+	public void setFastDropping(boolean isFast) {
+		this.isFastDropping = isFast;
+	}
+
+	public boolean getFastDropping() {
+		return isFastDropping;
+	}
+
+	/**
+	 * Instantly drops the tetrimino to the lowest possible position.
+	 */
+	public void hardDropTetrimino() {
+		if (currentTetrimino == null)
+			return;
+
+		// Move down until it can't
+		while (moveCurrentTetriminoDown())
+			;
+
+		fixTetriminoToBoard();
+	}
+
+	/**
+	 * Moves the current tetrimino left.
+	 * 
+	 * @return true if moved successfully, false if blocked.
+	 */
+	public boolean moveCurrentTetriminoLeft() {
+		return moveCurrentTetrimino(-1);
+	}
+
+	/**
+	 * Moves the current tetrimino right.
+	 * 
+	 * @return true if moved successfully, false if blocked.
+	 */
+	public boolean moveCurrentTetriminoRight() {
+		return moveCurrentTetrimino(1);
+	}
+
+	/**
+	 * Moves the tetrimino in the specified horizontal direction.
+	 * 
+	 * @param direction -1 for left, 1 for right.
+	 * @return true if the move was successful, false if blocked.
+	 */
+	private boolean moveCurrentTetrimino(int direction) {
+		if (currentTetrimino == null)
+			return false;
+
+		int nextX = currentTetrimino.getX() + direction;
+
+		clearTetriminoFromBoard();
+
+		if (!canMove(currentTetrimino, nextX, currentTetrimino.getY())) {
+			placeTetriminoOnBoard(); // Restore the position if can move <- or ->
+			return false;
+		}
+
+		currentTetrimino.setX(nextX); // Move the tetrimino
+		placeTetriminoOnBoard();
+
+		return true;
+	}
+
+	/**
+	 * Spawns a new random tetrimino at the top center of the board.
+	 */
 	public void spawnTetrimino() {
 		currentTetrimino = TetriminoFactory.genRandomTetrimino();
 
@@ -38,7 +119,11 @@ public class Board {
 		setVertical(currentTetrimino, MIN_Y);
 	}
 
-	// Try to move the tetrimino down. false if bottom reached.
+	/**
+	 * Moves the current tetrimino down.
+	 * 
+	 * @return true if moved, false if it reached the bottom.
+	 */
 	public boolean moveCurrentTetriminoDown() {
 		if (currentTetrimino == null)
 			return false;
@@ -59,6 +144,9 @@ public class Board {
 		return true;
 	}
 
+	/**
+	 * Checks if the tetrimino can move to a new position.
+	 */
 	public boolean canMove(Tetrimino tetrimino, int newX, int newY) {
 		// I get the shape of the tetrimino T L O J S Z I
 		int[][] shape = tetrimino.getShape();
@@ -87,6 +175,47 @@ public class Board {
 		return true; // There is no collision
 	}
 
+	/**
+	 * Clears all full lines from the board and shifts the remaining lines down.
+	 */
+	public void clearFullLines() {
+		for (int row = MAX_Y; row >= MIN_Y; row--) {
+			if (isFullLine(row)) {
+				removeLine(row);
+				row++; // Check the same row again after go all down
+			}
+		}
+	}
+
+	/**
+	 * Delete the full row and lower everything that is above
+	 */
+	private void removeLine(int row) {
+		// Move all the upper rows down
+		for (int i = row; i > MIN_Y; i--) {
+			gameBoard[i] = Arrays.copyOf(gameBoard[i - 1], gameBoard[i - 1].length);
+		}
+
+		// Empty the upper row
+		Arrays.fill(gameBoard[MIN_Y], 0);
+	}
+
+	/**
+	 * Verify if a row is full
+	 */
+	private boolean isFullLine(int row) {
+		for (int col = MIN_X; col <= MAX_X; col++) {
+			if (gameBoard[row][col] == 0) {
+				return false; // If some space in the row is not an empty row
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Rotates the current tetrimino if possible. If rotation causes a collision, it
+	 * is reverted to its original state.
+	 */
 	public void rotateCurrentTetrimino() {
 		if (currentTetrimino == null)
 			return;
@@ -96,18 +225,19 @@ public class Board {
 		int[][] originalShape = currentTetrimino.getShape(); // Save the actual shape
 		currentTetrimino.rotate(); // Try to rotate
 
-		// If the rotation provokes a collision with a board bound or other tetrimino, revert the rotation
+		// If the rotation provokes a collision with a board bound or other tetrimino,
+		// revert the rotation
 		if (!canMove(currentTetrimino, currentTetrimino.getX(), currentTetrimino.getY())) {
 			currentTetrimino.setShape(originalShape); // Back to the original shape
 		}
 
 		// Set the tetrimino rotated
 		placeTetriminoOnBoard();
-
-		// Print the current board status
-		printBoard();
 	}
 
+	/**
+	 * Fixes the current tetrimino to the board and checks for full lines.
+	 */
 	public void fixTetriminoToBoard() {
 		int[][] shape = currentTetrimino.getShape();
 
@@ -123,8 +253,33 @@ public class Board {
 				}
 			}
 		}
+
+		// Delete all the full lines after fix the current tetrimino
+		clearFullLines();
+
+		if (isGameOver()) {
+			System.out.println("Game Over!");
+			System.exit(0); // The game is over
+		}
+
+		spawnTetrimino();
 	}
 
+	/**
+	 * Checks if the game is over.
+	 */
+	public boolean isGameOver() {
+		for (int col = MIN_X; col <= MAX_X; col++) {
+			if (gameBoard[MIN_Y][col] == 1) {
+				return true; // If there is some tetrimino in the superior row the game ends
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Places the current tetrimino on the board by marking its occupied spaces.
+	 */
 	public void placeTetriminoOnBoard() {
 		int[][] shape = currentTetrimino.getShape();
 
@@ -145,6 +300,9 @@ public class Board {
 		}
 	}
 
+	/**
+	 * Removes the current tetrimino from the board by clearing its occupied spaces.
+	 */
 	public void clearTetriminoFromBoard() {
 		int[][] shape = currentTetrimino.getShape();
 
@@ -162,6 +320,9 @@ public class Board {
 		}
 	}
 
+	/**
+	 * Prints the game board to the console.
+	 */
 	public void printBoard() {
 		StringBuilder sb = new StringBuilder();
 

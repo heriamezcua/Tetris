@@ -1,12 +1,19 @@
 package tetrimino;
 
+/**
+ * Represents the I-shaped Tetrimino in Tetris.
+ * This piece has a specific initial configuration and can rotate.
+ */
 public class IShape extends Tetrimino {
 
+    /**
+     * Constructs a LShape Tetrimino with its default shape.
+     */
 	public IShape() {
         super(new int[][] {
         	// @formatter:off
+        	{1, 1, 1, 1},
             {0, 0, 0, 0},
-            {1, 1, 1, 1},
             {0, 0, 0, 0},
             {0, 0, 0, 0}
             // @formatter:on
@@ -14,6 +21,10 @@ public class IShape extends Tetrimino {
 
 	}
 
+
+    /**
+     * Rotates the IShape Tetrimino 90 degrees clockwise.
+     */
 	@Override
 	public void rotate() {
         int[][] shape = getShape();

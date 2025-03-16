@@ -1,7 +1,14 @@
 package tetrimino;
 
+/**
+ * Represents the Z-shaped Tetrimino in Tetris.
+ * This piece has a specific initial configuration and can rotate.
+ */
 public class ZShape extends Tetrimino {
 
+    /**
+     * Constructs a ZShape Tetrimino with its default shape.
+     */
 	public ZShape() {
 		super(new int[][]
 		// @formatter:off
@@ -12,6 +19,10 @@ public class ZShape extends Tetrimino {
 
 	}
 
+
+    /**
+     * Rotates the ZShape Tetrimino 90 degrees clockwise.
+     */
 	@Override
 	public void rotate() {
 		int size = getShape().length;

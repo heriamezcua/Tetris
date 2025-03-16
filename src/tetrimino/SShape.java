@@ -1,7 +1,14 @@
 package tetrimino;
 
+/**
+ * Represents the S-shaped Tetrimino in Tetris.
+ * This piece has a specific initial configuration and can rotate.
+ */
 public class SShape extends Tetrimino {
 
+    /**
+     * Constructs a SShape Tetrimino with its default shape.
+     */
 	public SShape() {
 		super(new int[][]
 		// @formatter:off
@@ -12,6 +19,10 @@ public class SShape extends Tetrimino {
 
 	}
 
+
+    /**
+     * Rotates the SShape Tetrimino 90 degrees clockwise.
+     */
 	@Override
 	public void rotate() {
 		int size = getShape().length;

@@ -1,7 +1,14 @@
 package tetrimino;
 
+/**
+ * Represents the L-shaped Tetrimino in Tetris.
+ * This piece has a specific initial configuration and can rotate.
+ */
 public class LShape extends Tetrimino {
 
+    /**
+     * Constructs a LShape Tetrimino with its default shape.
+     */
 	public LShape() {
 		super(new int[][]
 		// @formatter:off
@@ -12,6 +19,10 @@ public class LShape extends Tetrimino {
 
 	}
 
+
+    /**
+     * Rotates the LShape Tetrimino 90 degrees clockwise.
+     */
     @Override
     public void rotate() {
         int size = getShape().length;
