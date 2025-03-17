@@ -25,6 +25,7 @@ Tetris
 │   │   ├── Board.java              # Manages the game board and Tetrimino placement
 │   │   ├── ConsoleKeyListener.java # Captures and processes player input
 │   │   ├── LogManager.java         # Handles logging and debugging
+│   │   ├── SoundManager.java       # Handles sounds in the game
 │   │   └── TetrisApp.java          # Main application class, starts the game
 │   │
 │   ├── tetrimino
@@ -75,8 +76,7 @@ Allowing future enhancements like scoring, animations, and additional game modes
 Learning about event-driven programming with keyboard listeners.
 Managing game state updates and rendering logic.
 
-- **Adding Sound to the Game**
-
+- **6. Adding Sound to the Game**
 Implementing background music and sound effects for actions like rotating, dropping, and clearing lines.
 Learning how to use Java libraries (e.g., javax.sound.sampled) to handle audio playback.
 Enhancing user engagement with well-integrated sound design.
